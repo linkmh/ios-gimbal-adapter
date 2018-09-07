@@ -142,6 +142,13 @@ static id _sharedObject = nil;
 }
 
 - (void)placeManager:(GMBLPlaceManager *)manager didBeginVisit:(GMBLVisit *)visit withDelay:(NSTimeInterval)delayTime {
+    UA_LDEBUG(@"Entered a Gimbal Place: %@ on the following date: %@ and dwell time of: %@", visit.place.name, visit.arrivalDate, delayTime);
+    UARegionEvent *regionEvent = [UARegionEvent regionEventWithRegionID:visit.place.identifier
+                                                                 source:GimbalSource
+                                                          boundaryEvent:UABoundaryEventEnterWithDelay];
+
+    [[UAirship shared].analytics addEvent:regionEvent];
+    
     id strongDelegate = self.delegate;
     if ([strongDelegate respondsToSelector:@selector(placeManager:didBeginVisit:withDelay:)]) {
         [strongDelegate placeManager:manager didBeginVisit:visit withDelay:delayTime];
